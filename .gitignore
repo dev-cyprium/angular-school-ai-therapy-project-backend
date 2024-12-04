@@ -1,0 +1,9 @@
+# Ignore GoLang generated files
+.idea
+
+# Ignore VsCode generated files
+.vscode
+
+# Ignore SQLITE database files
+db.sqlite
+
