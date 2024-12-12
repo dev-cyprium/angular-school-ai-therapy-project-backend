@@ -16,15 +16,20 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	err = db.AutoMigrate(&data.Pricing{}, &data.Feature{})
-
-	if err != nil {
-		panic("failed to migrate database")
-	}
-
+	data.ResetDB(db)
 	data.SeedData(db)
 
 	r := mux.NewRouter()
+
+	// Add CORS headers
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+			next.ServeHTTP(w, r)
+		})
+	})
 
 	r.HandleFunc("/pricing", data.GetPricing(db)).Methods("GET")
 
